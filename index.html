@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grid Split Layout</title>
+    <link href="node_modules/video.js/dist/video-js.min.css" rel="stylesheet" />
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="/src/style.css"
+      type="text/css"
+      media="screen"
+      title="no title"
+      charset="utf-8"
+    />
+    <!--script
+      type="module"
+      src="http://localhost:8000/src/TimeElement-lit.js"
+    ></script-->
+    <!--link rel="stylesheet" href="my-video-js.css" /-->
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="outer-pane row">
+        <div class="inner-pane col-4" id="left-pane">
+          <p id="user-info">user-info</p>
+          <div class="input-container" id="video-url-box">
+            <label for="youtube-url">영상 URL</label>
+            <input
+              type="text"
+              id="youtube-url"
+              placeholder="YouTube 링크를 기입"
+              name="youtube_url"
+            />
+          </div>
+
+          <div class="input-container">
+            <div class="time-pane">
+              <div class="time-group">
+                <label for="start-time-input" class="time-label"
+                  >시작 시간</label
+                >
+                <time-element id="start-time-input"></time-element>
+              </div>
+              <!--span class="time-span">~</span-->
+              <div class="time-group">
+                <label for="end-time-input" class="time-label">종료 시간</label>
+                <time-element id="end-time-input"></time-element>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="data-button" id="check-button">
+            영상 체크
+          </button>
+          <div id="button-row">
+            <button class="data-button" id="submit-button">영상 제출</button>
+            <button class="data-button" id="overwrite-button">덮어쓰기</button>
+          </div>
+        </div>
+
+        <div class="inner-pane col-4" id="right-pane">
+          <video
+            id="my-video"
+            class="video-js vjs-default-skin vjs-fluid"
+            preload="auto"
+            controls
+            data-setup='{"aspectRatio": "640:267", "playbackRates": [0.25, 0.5, 1, 1.25, 1.5, 1.75, 2t]}'
+            width="512"
+            height="512"
+          >
+            <!--source
+              src="http://localhost:8000/cropped_videos/?video_id=15FjcnS6qZs&start=00141&end=00148"
+              type="video/mp4"
+            /-->
+            <p class="vjs-no-js">
+              To view this video, please enable JavaScript, and consider
+              upgrading to a web browser that
+              <a
+                href="https://videojs.com/html5-video-support/"
+                target="_blank"
+              >
+                supports HTML5 video
+              </a>
+            </p>
+          </video>
+        </div>
+      </div>
+      <div class="markdown">
+        <p id="readme">Here's for markdown!</p>
+      </div>
+    </div>
+    <script
+      type="module"
+      src="node_modules/showdown/dist/showdown.min.js"
+    ></script>
+    <script
+      type="module"
+      src="node_modules/video.js/dist/video.min.js"
+    ></script>
+    <script
+      type="module"
+      src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"
+    ></script>
+    <script type="module" src="/src/TimeElement.mjs"></script>
+    <script type="module" src="/src/event.js"></script>
+  </body>
+</html>
