@@ -115,7 +115,8 @@ async def login(login_request: Annotated[LoginRequest, Depends(validate_user)]):
 async def verify_access_token(
     user: Annotated[str, Depends(TokenHandler.verify_access_token)]
 ):
-    pass
+    print(user)
+    return JSONResponse(content={"user": user}, status_code=status.HTTP_200_OK)
 
 
 @app.get("/data-collection/face-crop")
@@ -145,8 +146,7 @@ async def get_video(
     )
 
     end_time: str = (
-        f"{
-            int(end[0:-4]):02d}:{int(end[-4:-2]):02d}:{int(end[-2:]):02d}"
+        f"{int(end[0:-4]): 02d}: {int(end[-4:-2]): 02d}: {int(end[-2:]): 02d}"
     )
     EXT = "mp4"
 
@@ -171,7 +171,8 @@ async def get_video(
 
 @app.exception_handler(HTTPException)
 def auth_exception_handler(request: Request, exc: HTTPException):
-    if exc.status_code in (401, 403):
+    if exc.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN):
+        print(exc.status_code)
         return RedirectResponse(url="/login")
     # return templates.TemplateResponse(name="error.html", request=request)
 

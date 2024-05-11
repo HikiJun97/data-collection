@@ -32,6 +32,13 @@ html {
   outline: 0;
 }
 
+#nameplate {
+  @extend .mx-3;
+  font-size: 1rem;
+  display: none;
+  text-align: center;
+}
+
 /*
 .outer-pane {
   align-self: center;
@@ -229,7 +236,9 @@ time-element {
   border-bottom-right-radius: 10px;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s;
 }
 
 .video-js:hover .vjs-control-bar {

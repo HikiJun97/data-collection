@@ -1,7 +1,8 @@
+from typing import Annotated
 from fastapi import Depends, Security, Request, Cookie, status, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta
-from exceptions import UnregisteredUserError, ExpiredAccessTokenError
+from exceptions import UnregisteredUserError, ExpiredAccessTokenError, NeedLoginError
 import jwt
 import time
 
@@ -13,20 +14,17 @@ class TokenHandler:
     @classmethod
     def create_token(cls, sub: str, expires_delta: timedelta):
         to_encode = {"sub": sub, "exp": datetime.utcnow() + expires_delta}
-        encoded_jwt = jwt.encode(
-            to_encode, cls.SECRET_KEY, algorithm=cls.ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, cls.SECRET_KEY, algorithm=cls.ALGORITHM)
         return encoded_jwt
 
     @classmethod
     def verify_access_token(
         cls,
         crendentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
-        refresh_token: dict = Cookie(None),
     ):
         try:
             token_payload = jwt.decode(
-                crendentials.credentials, cls.SECRET_KEY, algorithms=[
-                    cls.ALGORITHM]
+                crendentials.credentials, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
             )
             print("payload:", token_payload)
             print(
@@ -37,15 +35,25 @@ class TokenHandler:
             )
             if token_payload.get("sub") != "sgn04088":
                 raise UnregisteredUserError()
-            return token_payload
+            return token_payload.get("sub")
         except jwt.ExpiredSignatureError:
-            raise HTTPException(
-                detail="Access Token Expired", status_code=status.HTTP_40
-            )
+            # raise HTTPException(
+            #     detail="Access Token Expired", status_code=status.HTTP_40
+            # )
+            return cls.verify_refresh_token()
         except jwt.PyJWTError:
             raise HTTPException(
                 detail="Token Error", status_code=status.HTTP_400_BAD_REQUEST
             )
 
     @classmethod
-    def verify_refresh_token(cls, ):
+    def verify_refresh_token(
+        cls, refresh_token: Annotated[str | None, Cookie()] = None
+    ):
+        if refresh_token is None:
+            raise NeedLoginError
+
+        token_payload = jwt.decode(
+            refresh_token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
+        )
+        return token_payload.get("sub")

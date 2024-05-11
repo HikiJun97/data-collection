@@ -139,7 +139,7 @@
       <header class="p-3 text-bg-dark">
         <div class="container">
           <div
-            class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+            class="d-flex flex-nowrap align-items-center justify-content-between"
           >
             <a
               href="/"
@@ -153,13 +153,9 @@
             </a>
 
             <div
-              class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+              class="nav col-8 justify-content-end align-items-center"
             >
-              <!--li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-              <li><a href="#" class="nav-link px-2 text-white">About</a></li-->
+							<p id="nameplate"></p>
             </div>
 
             <!--form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
@@ -172,7 +168,7 @@
             </form-->
 
             <div class="text-end">
-              <button type="button" class="btn btn-outline-light me-2" onclick="location.href='/login'">
+              <button type="button" class="btn btn-outline-light me-2" id="login-button" onclick="location.href='/login'">
                 Login
               </button>
               <!--button type="button" class="btn btn-warning">Sign-up</button-->
@@ -257,8 +253,6 @@
     </main>
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 		<script charset="utf-8" src="src/TimeElement.mjs"></script>
-		<script charset="utf-8" src="src/index.js">
-			
-		</script>
+		<script charset="utf-8" src="src/index.js"></script>
   </body>
 </html>

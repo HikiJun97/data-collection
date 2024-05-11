@@ -26,8 +26,9 @@ document.getElementById("loginForm").addEventListener("submit", (event) => {
             // set 'secure;' after domain attached
             sessionStorage.setItem("isLoggedIn", "true");
             console.log("Cookie saved");
-            let url = "/data-collection/face-crop";
-            loadPage(url);
+            // let url = "/";
+            // loadPage(url);
+            window.location.href = "/";
           }
         });
         document.getElementById("errorMsg").style.display = "none";
@@ -38,22 +39,23 @@ document.getElementById("loginForm").addEventListener("submit", (event) => {
     });
 });
 
-function loadPage(url) {
-  fetch(url, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    },
-  })
-    .then((response) => {
-      if (response.ok) return response.text();
-      throw new Error("Failed to fetch data");
-    })
-    .then((html) => {
-      document.body.innerHTML = html;
-      console.log(url.split("/").at(-1));
-      history.pushState(null, url.split("/").at(-1), url);
-    })
-    .catch((error) => {
-      console.error("Error fetching protected resources:", error);
-    });
-}
+// function loadPage(url) {
+//   fetch(url, {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//     },
+//   })
+//     .then((response) => {
+//       if (response.ok) return response.text();
+//       throw new Error("Failed to fetch data");
+//     })
+//     .then((html) => {
+//       // document.body.innerHTML = html;
+//       document.write();
+//       console.log(url.split("/").at(-1));
+//       history.pushState(null, url.split("/").at(-1), url);
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching protected resources:", error);
+//     });
+// }

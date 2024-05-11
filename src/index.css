@@ -7810,7 +7810,7 @@ textarea.form-control-lg {
   margin-left: 0.5rem !important;
 }
 
-.mx-3 {
+.mx-3, #nameplate {
   margin-right: 1rem !important;
   margin-left: 1rem !important;
 }
@@ -11875,6 +11875,12 @@ html {
 
 .dropdown-toggle:not(:focus) {
   outline: 0;
+}
+
+#nameplate {
+  font-size: 1rem;
+  display: none;
+  text-align: center;
 }
 
 /*
