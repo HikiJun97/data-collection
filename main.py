@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from datetime import timedelta
 from token_handler import TokenHandler
+from exceptions import UnregisteredUserError
 
 app = FastAPI()
 
@@ -33,12 +34,22 @@ templates = Jinja2Templates(directory=HTML_DIR)
 
 REFRESH_TOKEN_EXPIRES = timedelta(days=1)
 ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+USER = "sgn04088"
+PASSWORD = "whgudwns1997"
 
 
 class LoginRequest(BaseModel):
     userId: str
     userPw: str
     remember: bool = Field(default=False)
+
+
+def validate_user(login_request: LoginRequest):
+    if login_request.userId != USER:
+        raise UnregisteredUserError
+    if login_request.userPw != PASSWORD:
+        raise UnregisteredUserError
+    return login_request
 
 
 temp_user_db = {
@@ -50,9 +61,6 @@ temp_user_db = {
     }
 }
 
-USER = "sgn04088"
-PASSWORD = "whgudwns1997"
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -63,8 +71,11 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root():
-    return RedirectResponse("/login")
+async def root(request: Request):
+    return templates.TemplateResponse(name="index.html", request=request)
+
+
+# return RedirectResponse("/login")
 
 
 @app.get("/value")
@@ -78,48 +89,44 @@ async def login_page(request: Request):
 
 
 @app.post("/login")
-async def login(
-    login_request: LoginRequest,
-):
+async def login(login_request: Annotated[LoginRequest, Depends(validate_user)]):
 
     print(f"login_request: {login_request}")
-    if login_request.userId == USER and login_request.userPw == PASSWORD:
-        refresh_token = TokenHandler.create_token(
-            sub=login_request.userId, expires_delta=REFRESH_TOKEN_EXPIRES
-        )
-        access_token = TokenHandler.create_token(
-            sub=login_request.userId, expires_delta=ACCESS_TOKEN_EXPIRES
-        )
-        response = JSONResponse(
-            content={"accessToken": access_token}, status_code=status.HTTP_200_OK
-        )
-        # response = Response(
-        #     content={"accessToken": access_token}, status_code=status.HTTP_200_OK
-        # )
-
-        response.set_cookie(
-            key="refreshToken",
-            value=refresh_token,
-            httponly=True,
-            samesite="strict",
-            path="/",
-        )  # set secure after domain attached
-        return response
-    else:
-        return HTMLResponse(status_code=status.HTTP_401_UNAUTHORIZED)
+    refresh_token = TokenHandler.create_token(
+        sub=login_request.userId, expires_delta=REFRESH_TOKEN_EXPIRES
+    )
+    access_token = TokenHandler.create_token(
+        sub=login_request.userId, expires_delta=ACCESS_TOKEN_EXPIRES
+    )
+    response = JSONResponse(
+        content={"accessToken": access_token}, status_code=status.HTTP_200_OK
+    )
+    response.set_cookie(
+        key="refreshToken",
+        value=refresh_token,
+        httponly=True,
+        samesite="strict",
+        path="/",
+    )  # set secure after domain attached
+    return response
 
 
-# temp
+@app.get("/verification")
+async def verify_access_token(
+    user: Annotated[str, Depends(TokenHandler.verify_access_token)]
+):
+    pass
+
+
 @app.get("/data-collection/face-crop")
 async def face_crop(
-    request: Request, token_payload: dict = Depends(TokenHandler.verify_token)
+    request: Request, token_payload: dict = Security(TokenHandler.verify_access_token)
 ):
     return templates.TemplateResponse(name="index.html", request=request)
 
-
-#     with open("dist/index.html", "r") as f:
-#         html_content = f.read()
-#     return HTMLResponse(html_content)
+    #     with open("dist/index.html", "r") as f:
+    #         html_content = f.read()
+    #     return HTMLResponse(html_content)
 
 
 @app.post("/check-video")
@@ -137,7 +144,10 @@ async def get_video(
         f"{int(start[0:-4]):02d}:{int(start[-4:-2]):02d}:{int(start[-2:]):02d}"
     )
 
-    end_time: str = f"{int(end[0:-4]):02d}:{int(end[-4:-2]):02d}:{int(end[-2:]):02d}"
+    end_time: str = (
+        f"{
+            int(end[0:-4]):02d}:{int(end[-4:-2]):02d}:{int(end[-2:]):02d}"
+    )
     EXT = "mp4"
 
     ROOT_PATH: Path = Path(
@@ -161,7 +171,7 @@ async def get_video(
 
 @app.exception_handler(HTTPException)
 def auth_exception_handler(request: Request, exc: HTTPException):
-    if exc.status_code == 401:
+    if exc.status_code in (401, 403):
         return RedirectResponse(url="/login")
     # return templates.TemplateResponse(name="error.html", request=request)
 

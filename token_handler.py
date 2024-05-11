@@ -1,12 +1,9 @@
-from fastapi import Depends, Security, status, HTTPException
+from fastapi import Depends, Security, Request, Cookie, status, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta
+from exceptions import UnregisteredUserError, ExpiredAccessTokenError
 import jwt
-
-
-class UnauthorizedUserError(Exception):
-    def __init__(self):
-        super().__init__("Unauthorized User")
+import time
 
 
 class TokenHandler:
@@ -21,16 +18,34 @@ class TokenHandler:
         return encoded_jwt
 
     @classmethod
-    def verify_token(cls, auth: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+    def verify_access_token(
+        cls,
+        crendentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
+        refresh_token: dict = Cookie(None),
+    ):
         try:
-            payload = jwt.decode(
-                auth.credentials, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
+            token_payload = jwt.decode(
+                crendentials.credentials, cls.SECRET_KEY, algorithms=[
+                    cls.ALGORITHM]
             )
-            print("payload:", payload)
-            if payload.get("sub") != "sgn04088":
-                raise UnauthorizedUserError()
-            return payload
+            print("payload:", token_payload)
+            print(
+                "Expiration Date:",
+                datetime.fromtimestamp(token_payload.get("exp")).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+            )
+            if token_payload.get("sub") != "sgn04088":
+                raise UnregisteredUserError()
+            return token_payload
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(
+                detail="Access Token Expired", status_code=status.HTTP_40
+            )
         except jwt.PyJWTError:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-        except UnauthorizedUserError:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+            raise HTTPException(
+                detail="Token Error", status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+    @classmethod
+    def verify_refresh_token(cls, ):
