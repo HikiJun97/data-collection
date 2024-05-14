@@ -32,11 +32,11 @@ app = FastAPI()
 SRC = Config.SRC
 HTML_DIR = Config.HTML_DIR
 app.mount("/" + SRC, StaticFiles(directory=HTML_DIR + "/" + SRC), name=SRC)
-app.mount(
-    "/node_modules",
-    StaticFiles(directory=HTML_DIR + "/" + "node_modules"),
-    name="node_modules",
-)
+# app.mount(
+#     "/node_modules",
+#     StaticFiles(directory=HTML_DIR + "/" + "node_modules"),
+#     name="node_modules",
+# )
 app.include_router(validation_router)
 USER = "sgn04088"
 PASSWORD = "whgudwns1997"
@@ -141,7 +141,7 @@ async def face_crop(
     # )
     with open(HTML_DIR + "/face-crop.html") as f:
         html_content = f.read()
-    return HTMLResponse(content=html_content)
+    return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 
 
 @app.get("/users")
@@ -212,4 +212,4 @@ def auth_exception_handler(request: Request, exc: HTTPException):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app="main2:app", host="0.0.0.0", port=8000, reload=True)

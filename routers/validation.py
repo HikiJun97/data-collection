@@ -1,16 +1,12 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Security, Request, status
-from fastapi.responses import JSONResponse
-from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse, HTMLResponse
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from token_handler import TokenHandler, TokenInfo
 from core.database.engine import get_async_session
 from core.database.models import Datum, User
-
-
-HTML_DIR = "."
-templates = Jinja2Templates(directory=HTML_DIR)
+from config import Config
 
 
 router: APIRouter = APIRouter(
@@ -22,7 +18,10 @@ router: APIRouter = APIRouter(
 async def data_validate(
     request: Request,
 ):
-    return templates.TemplateResponse(name="validation.html", request=request)
+    # return templates.TemplateResponse(name="validation.html", request=request)
+    with open(Config.HTML_DIR + "/validation.html") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 
 
 @router.post("/valid", response_class=JSONResponse, response_model=None)

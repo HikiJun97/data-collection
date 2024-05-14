@@ -251,10 +251,13 @@
       </div>
 
     </main>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-		<script charset="utf-8" src="src/header-load.js">
+    <script type="module" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+		<script type="module" src="src/header-load.js">
 		</script>
-		<script charset="utf-8" src="src/TimeElement.mjs"></script>
-		<script charset="utf-8" src="src/go-back-to-index.js"></script>
+		<script type="module" charset="utf-8" src="https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js">
+			
+		</script>
+		<script type="module" src="src/TimeElement.js"></script>
+		<script type="module" src="src/go-back-to-index.js"></script>
   </body>
 </html>
