@@ -11,8 +11,10 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "choices.js": "^10.2.0",
     "lit": "^3.1.2",
-    "showdown": "^2.1.0"
+    "showdown": "^2.1.0",
+    "tom-select": "^2.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

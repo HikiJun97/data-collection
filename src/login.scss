@@ -1,5 +1,5 @@
-$primary: #ff7630;
 @import "../node_modules/bootstrap/scss/bootstrap";
+@import "ci-color";
 
 html,
 body {
@@ -30,7 +30,7 @@ body {
 .btn-bd-primary {
   --bd-violet-bg: #712cf9;
   --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-  --bd-orange: #ff7630;
+  --bd-orange: $minirecord;
 
   --bs-btn-font-weight: 600;
   --bs-btn-color: var(--bs-white);

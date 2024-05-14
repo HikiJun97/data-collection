@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, List, Dict, Any
 from fastapi import (
     FastAPI,
     Request,
@@ -15,9 +15,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, insert, delete
+from sqlalchemy.orm import joinedload
+
+from core.database.engine import get_async_session
+from core.database.models import User, Video, Datum
+from routers.validation import router as validation_router
+from schemas import LoginRequest
 from datetime import timedelta
-from token_handler import TokenHandler
+from token_handler import TokenHandler, TokenInfo
 from exceptions import UnregisteredUserError
 
 app = FastAPI()
@@ -30,18 +37,10 @@ app.mount(
     StaticFiles(directory=HTML_DIR + "/" + "node_modules"),
     name="node_modules",
 )
+app.include_router(validation_router)
 templates = Jinja2Templates(directory=HTML_DIR)
-
-REFRESH_TOKEN_EXPIRES = timedelta(days=1)
-ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
 USER = "sgn04088"
 PASSWORD = "whgudwns1997"
-
-
-class LoginRequest(BaseModel):
-    userId: str
-    userPw: str
-    remember: bool = Field(default=False)
 
 
 def validate_user(login_request: LoginRequest):
@@ -51,15 +50,6 @@ def validate_user(login_request: LoginRequest):
         raise UnregisteredUserError
     return login_request
 
-
-temp_user_db = {
-    "sgn04088": {
-        "name": "조형준",
-        "id": "sgn04088",
-        "password": "whgudwns1997",
-        "role": "admin",
-    }
-}
 
 app.add_middleware(
     CORSMiddleware,
@@ -71,11 +61,17 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root(request: Request):
-    return templates.TemplateResponse(name="index.html", request=request)
-
-
-# return RedirectResponse("/login")
+async def root(
+    request: Request,
+    token_info: Annotated[TokenInfo, Security(TokenHandler.verify_access_token)],
+):
+    access_token = (
+        f"{token_info.access_token.scheme} {token_info.access_token.credentials}"
+    )
+    return RedirectResponse(
+        url="/intermediate",
+        headers={"Authorization": access_token},
+    )
 
 
 @app.get("/value")
@@ -90,14 +86,8 @@ async def login_page(request: Request):
 
 @app.post("/login")
 async def login(login_request: Annotated[LoginRequest, Depends(validate_user)]):
-
-    print(f"login_request: {login_request}")
-    refresh_token = TokenHandler.create_token(
-        sub=login_request.userId, expires_delta=REFRESH_TOKEN_EXPIRES
-    )
-    access_token = TokenHandler.create_token(
-        sub=login_request.userId, expires_delta=ACCESS_TOKEN_EXPIRES
-    )
+    refresh_token = TokenHandler.create_refresh_token(sub=login_request.userId)
+    access_token = TokenHandler.create_access_token(sub=login_request.userId)
     response = JSONResponse(
         content={"accessToken": access_token}, status_code=status.HTTP_200_OK
     )
@@ -113,21 +103,70 @@ async def login(login_request: Annotated[LoginRequest, Depends(validate_user)]):
 
 @app.get("/verification")
 async def verify_access_token(
-    user: Annotated[str, Depends(TokenHandler.verify_access_token)]
+    token_info: Annotated[TokenInfo, Depends(TokenHandler.verify_access_token)]
 ):
-    print(user)
-    return JSONResponse(content={"user": user}, status_code=status.HTTP_200_OK)
+    print(token_info.username)
+    return JSONResponse(
+        content={"username": token_info.username}, status_code=status.HTTP_200_OK
+    )
 
 
-@app.get("/data-collection/face-crop")
-async def face_crop(
-    request: Request, token_payload: dict = Security(TokenHandler.verify_access_token)
-):
+@app.get("/index")
+async def user_type(request: Request):
     return templates.TemplateResponse(name="index.html", request=request)
 
-    #     with open("dist/index.html", "r") as f:
-    #         html_content = f.read()
-    #     return HTMLResponse(html_content)
+
+@app.get("/validation")
+async def data_validate(
+    request: Request,
+    token_payload: TokenInfo = Security(TokenHandler.verify_access_token),
+):
+    return templates.TemplateResponse(name="validation.html", request=request)
+
+
+@app.get("/intermediate")
+async def intermediate(request: Request):
+    return templates.TemplateResponse(name="intermediate.html", request=request)
+
+
+@app.get("/data-collection")
+async def face_crop(
+    request: Request,
+    token_payload: TokenInfo = Security(TokenHandler.verify_access_token),
+):
+    print("redirected to /data-collection")
+    return templates.TemplateResponse(
+        name="face-crop.html",
+        request=request,
+    )
+
+
+@app.get("/users")
+async def get_users_and_data(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+    token_payload: TokenInfo = Security(TokenHandler.verify_access_token),
+):
+    query = select(User).options(joinedload(User.data))
+    query_result = (await session.scalars(query)).unique().all()
+    results: List[Dict[str, Any]] = [
+        {
+            "id": user.id,
+            "data": [
+                {
+                    "id": datum.id,
+                    "video_id": datum.video_id,
+                    "start_time": datum.start_time,
+                    "end_time": datum.end_time,
+                    "valid": datum.valid,
+                    "validated": datum.validated,
+                    "validator": datum.validator,
+                }
+                for datum in user.data
+            ],
+        }
+        for user in query_result
+    ]
+    return results
 
 
 @app.post("/check-video")
@@ -158,23 +197,13 @@ async def get_video(
     return FileResponse(path=ROOT_PATH / file_name)
 
 
-# @app.get("/", response_class=HTMLResponse)
-# async def main_page(request: Request):
-#     return templates.TemplateResponse("index.html", {"request": request})
-
-# @app.get("/readme")
-# async def readme():
-#     return FileResponse(
-#         "src/README.md", media_type="text/markdown", filename="README.md"
-#     )
-
-
 @app.exception_handler(HTTPException)
 def auth_exception_handler(request: Request, exc: HTTPException):
+    import traceback
+
     if exc.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN):
-        print(exc.status_code)
-        return RedirectResponse(url="/login")
-    # return templates.TemplateResponse(name="error.html", request=request)
+        print(traceback.format_exc(), exc)
+        return RedirectResponse(url="/intermediate")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-function sendRequestWithToken() {
+function loadHeaderWithToken() {
   // Local Storage에서 access token 가져오기
   const accessToken = localStorage.getItem("accessToken");
   console.log("accessToken: " + accessToken);
@@ -18,11 +18,10 @@ function sendRequestWithToken() {
           window.location.href = "/login";
         }
         response.json().then((data) => {
-          let user = data.user;
-          console.log("user: " + user);
+          let username = data.username;
           let nameplate = document.querySelector("#nameplate");
           nameplate.style.display = "inline";
-          nameplate.innerText = user;
+          nameplate.innerText = username;
           let loginButton = document.querySelector("#login-button");
           loginButton.innerText = "Logout";
           loginButton.onclick = clearAuthTokens;
@@ -42,5 +41,4 @@ function clearAuthTokens() {
   window.location.href = "/login";
 }
 
-// 페이지 로딩 시 자동으로 실행되게 이벤트 리스너 추가
-window.onload = sendRequestWithToken;
+loadHeaderWithToken();

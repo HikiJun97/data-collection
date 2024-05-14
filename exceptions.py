@@ -18,3 +18,10 @@ class ExpiredAccessTokenError(HTTPException):
 class NeedLoginError(HTTPException):
     def __init__(self):
         super().__init__(detail="Need Login", status_code=status.HTTP_403_FORBIDDEN)
+
+
+class AllTokensExpiredError(HTTPException):
+    def __init__(self):
+        super().__init__(
+            detail="All Tokens have been exipred", status_code=status.HTTP_403_FORBIDDEN
+        )

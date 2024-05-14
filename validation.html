@@ -1,6 +1,11 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
     <script src="src/color-modes.js"></script>
 
     <meta charset="utf-8" />
@@ -11,7 +16,7 @@
       content="Mark Otto, Jacob Thornton, and Bootstrap contributors"
     />
     <meta name="generator" content="Hugo 0.122.0" />
-    <title>Data Collection</title>
+    <title>Face Crop</title>
 
     <link
       rel="canonical"
@@ -30,12 +35,15 @@
 
     <link
       rel="stylesheet"
-      href="src/index.css"
+      href="node_modules/tom-select/dist/css/tom-select.bootstrap5.min.css"
       type="text/css"
       media="screen"
       title="no title"
       charset="utf-8"
     />
+
+    <!-- Custom styles for this template -->
+    <link href="src/validation.css" rel="stylesheet" />
   </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -101,26 +109,114 @@
         </div>
       </div>
     </header>
-    <main>
-      <div
-        id="button-container"
-        class="container d-flex flex-column justify-content-center align-items-center"
-      >
-        <div class="divider"></div>
-        <button
-          type="button"
-          id="normal"
-          class="user-selection col-6 my-5 h-20"
-        >
-          일반 사용자
-        </button>
-        <button type="button" id="admin" class="user-selection col-6 my-5 h-20">
-          관리자
-        </button>
+    <div class="container justify-content-center mt-5">
+      <div class="outer-pane row justify-content-center align-items-stretch">
+        <div class="inner-pane" id="left-pane">
+          <select
+            id="user-selection"
+            class="col"
+            placeholder="Select a user..."
+            openOnFocus="true"
+          ></select>
+          <div class="my-3"></div>
+          <select
+            id="data-selection"
+            class="col"
+            placeholder="Select data..."
+            openOnFocus="true"
+          ></select>
+          <div class="my-5"></div>
+          <button
+            type="button"
+            class="btn btn-lg btn-primary w-100"
+            id="check-button"
+          >
+            Check
+          </button>
+          <div class="my-5"></div>
+          <div class="select-group">
+            <select
+              id="speaking-type-selection"
+              openOnFocus="true"
+              placeholder="Speaking Type"
+            >
+              <option value="" selected disabled>발화 타입</option>
+              <option value="singing">Singing</option>
+              <option value="emotional">Emotional</option>
+              <option value="formal">Formal</option>
+              <option value="normal">Normal</option>
+            </select>
+            <select id="gender-selection" placeholder="성별" openOnFocus="true">
+              <option value="" selected disabled>성별</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+            <select id="age-selection" placeholder="나이" openOnFocus="true">
+              <option value="" selected disabled>나이</option>
+              <option value="infancy">0~2</option>
+              <option value="preschool">3~6</option>
+              <option value="childhood">7~11</option>
+              <option value="adolescence">12~20</option>
+              <option value="twenties">20~29</option>
+              <option value="thirties">30~39</option>
+              <option value="late-adulthood">40~60</option>
+              <option value="senescence">61~</option>
+            </select>
+          </div>
+          <div class="my-5"></div>
+          <div class="btn-group w-100" role="group" aria-label="validation">
+            <button
+              type="button"
+              class="btn btn-lg btn-primary"
+              id="invalid-button"
+            >
+              Invalid
+            </button>
+            <button
+              type="button"
+              class="btn btn-lg btn-primary"
+              id="valid-button"
+            >
+              Valid
+            </button>
+          </div>
+        </div>
+
+        <div class="inner-pane" id="right-pane">
+          <video
+            id="my-video"
+            class="video-js vjs-default-skin vjs-fluid"
+            preload="auto"
+            controls
+            data-setup='{"aspectRatio": "640:267", "playbackRates": [0.25, 0.5, 1, 1.25, 1.5, 1.75, 2t]}'
+            width="512"
+            height="512"
+          >
+            <!--source
+              src="http://localhost:8000/cropped_videos/?video_id=15FjcnS6qZs&start=00141&end=00148"
+              type="video/mp4"
+            /-->
+            <p class="vjs-no-js">
+              To view this video, please enable JavaScript, and consider
+              upgrading to a web browser that
+              <a
+                href="https://videojs.com/html5-video-support/"
+                target="_blank"
+              >
+                supports HTML5 video
+              </a>
+            </p>
+          </video>
+        </div>
       </div>
-    </main>
-    <script charset="utf-8" src="src/header-load.js"></script>
-    <script charset="utf-8" src="src/button-link.js"></script>
+      <div class="markdown">
+        <p id="readme">Here's for markdown!</p>
+      </div>
+    </div>
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script charset="utf-8" src="src/header-load.js"></script>
+    <script defer type="module" src="src/validation.js"></script>
+    <script src="src/fetch-validation.js"></script>
   </body>
 </html>

@@ -1,45 +1,4 @@
-document.getElementById("loginForm").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const userId = document.getElementById("user-id").value;
-  const userPw = document.getElementById("user-password").value;
-  const remember = document.getElementById("remember-me").checked;
-
-  fetch("/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userId: userId,
-      userPw: userPw,
-      rememeber: remember,
-    }),
-  })
-    .then((response) => {
-      let status_4XX = [401, 403];
-      if (status_4XX.includes(response.status)) {
-        document.getElementById("errorMsg").style.display = "block";
-      } else {
-        response.json().then((data) => {
-          if (data.accessToken) {
-            localStorage.setItem("accessToken", data.accessToken);
-            // set 'secure;' after domain attached
-            sessionStorage.setItem("isLoggedIn", "true");
-            console.log("Cookie saved");
-            // let url = "/data-collection";
-            // loadPage(url);
-            window.location.href = "/index";
-          }
-        });
-        document.getElementById("errorMsg").style.display = "none";
-      }
-    })
-    .catch((error) => {
-      console.error("Error during fetch:", error);
-    });
-});
-
-function sendRequestWithToken() {
+function sendRequestWithToken(url) {
   // Local Storage에서 access token 가져오기
   const accessToken = localStorage.getItem("accessToken");
   console.log("accessToken: " + accessToken);
@@ -54,7 +13,6 @@ function sendRequestWithToken() {
       },
     })
       .then((response) => {
-        let url = "/data-collection";
         loadPage(url);
       })
       .catch((error) => console.error("Error:", error));
@@ -98,3 +56,15 @@ function loadScript(html) {
 }
 
 // document.addEventListener("DOMContentLoaded", sendRequestWithToken);
+
+document
+  .querySelector("#normal.user-selection")
+  .addEventListener("click", () => {
+    sendRequestWithToken("/data-collection");
+  });
+
+document
+  .querySelector("#admin.user-selection")
+  .addEventListener("click", () => {
+    sendRequestWithToken("/validation");
+  });

@@ -7,8 +7,8 @@ export class TimeElement extends LitElement {
     }
 
     #time_wrapper {
-      width: 100%;
       height: 50px;
+      min-width: 80px;
       position: relative;
       border: solid;
       border-color: silver;

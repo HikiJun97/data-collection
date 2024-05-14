@@ -2,14 +2,29 @@ from typing import Annotated
 from fastapi import Depends, Security, Request, Cookie, status, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta
-from exceptions import UnregisteredUserError, ExpiredAccessTokenError, NeedLoginError
+from exceptions import (
+    UnregisteredUserError,
+    ExpiredAccessTokenError,
+    NeedLoginError,
+    AllTokensExpiredError,
+)
 import jwt
 import time
+
+security = HTTPBearer()
+
+
+class TokenInfo:
+    def __init__(self, access_token: HTTPAuthorizationCredentials, username: str):
+        self.access_token = access_token
+        self.username = username
 
 
 class TokenHandler:
     SECRET_KEY = "ddyuddya"
     ALGORITHM = "HS256"
+    REFRESH_TOKEN_EXPIRES = timedelta(days=1)
+    ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
 
     @classmethod
     def create_token(cls, sub: str, expires_delta: timedelta):
@@ -18,13 +33,21 @@ class TokenHandler:
         return encoded_jwt
 
     @classmethod
+    def create_access_token(cls, sub: str):
+        return cls.create_token(sub=sub, expires_delta=cls.ACCESS_TOKEN_EXPIRES)
+
+    @classmethod
+    def create_refresh_token(cls, sub: str):
+        return cls.create_token(sub=sub, expires_delta=cls.REFRESH_TOKEN_EXPIRES)
+
+    @classmethod
     def verify_access_token(
         cls,
-        crendentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
+        credentials: HTTPAuthorizationCredentials = Security(security),
     ):
         try:
             token_payload = jwt.decode(
-                crendentials.credentials, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
+                credentials.credentials, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
             )
             print("payload:", token_payload)
             print(
@@ -35,11 +58,13 @@ class TokenHandler:
             )
             if token_payload.get("sub") != "sgn04088":
                 raise UnregisteredUserError()
-            return token_payload.get("sub")
+            return TokenInfo(credentials, token_payload.get("sub"))
+
         except jwt.ExpiredSignatureError:
             # raise HTTPException(
             #     detail="Access Token Expired", status_code=status.HTTP_40
             # )
+            print("Access Token has expired")
             return cls.verify_refresh_token()
         except jwt.PyJWTError:
             raise HTTPException(
@@ -53,7 +78,14 @@ class TokenHandler:
         if refresh_token is None:
             raise NeedLoginError
 
-        token_payload = jwt.decode(
-            refresh_token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
-        )
-        return token_payload.get("sub")
+        try:
+            token_payload = jwt.decode(
+                refresh_token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM]
+            )
+            new_access_token = cls.create_token(
+                sub=token_payload.get("sub"), expires_delta=cls.ACCESS_TOKEN_EXPIRES
+            )
+            return new_access_token
+        except jwt.ExpiredSignatureError:
+            print("Refresh Token has expired")
+            raise AllTokensExpiredError()
