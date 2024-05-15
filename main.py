@@ -135,13 +135,19 @@ async def face_crop(
     token_payload: TokenInfo = Security(TokenHandler.verify_access_token),
 ):
     print("redirected to /data-collection")
-    # return templates.TemplateResponse(
-    #     name="face-crop.html",
-    #     request=request,
-    # )
     with open(HTML_DIR + "/face-crop.html") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content)
+
+
+# @app.get("/facecrop")
+# async def face_crop_serve(
+#     request: Request,
+# ):
+#     print("redirected to /data-collection")
+#     with open(HTML_DIR + "/face-crop.html") as f:
+#         html_content = f.read()
+#     return HTMLResponse(content=html_content)
 
 
 @app.get("/users")

@@ -205,22 +205,19 @@ html {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  border: solid;
-  border-color: blue;
+  gap: 0.6rem;
 }
 
 .time-group {
   /*  */
-  max-width: 50%;
+  max-width: 45%;
   width: 100%;
   min-width: 200px;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: start;
-  align-items: center;
-  border: solid;
-  border-color: purple;
+  align-content: start;
 }
 
 .time-span {
@@ -239,10 +236,11 @@ html {
 }
 
 .time-label {
-  width: 100%;
-  height: 30px;
-  vertical-align: sub;
-  font-size: 3rem;
+  display: block; /* 레이블을 블록 요소로 설정 */
+  @extend .mt-1, .mb-2;
+  color: rgb(150, 150, 150);
+  font-size: 0.76rem;
+  line-height: 10px;
 }
 
 time-element {

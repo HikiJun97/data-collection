@@ -44,18 +44,20 @@ function loadScript(html) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
   const scripts = doc.querySelectorAll("script");
+  copyAllScripts(scripts);
+}
+
+function copyAllScripts(scripts) {
   scripts.forEach((script) => {
     const newScript = document.createElement("script");
-    if (script.src) {
-      newScript.src = script.src;
-    } else {
-      newScript.textContent = script.textContent;
+
+    for (let attr of script.attributes) {
+      newScript.setAttribute(attr.name, attr.value);
     }
+    newScript.textContent = script.textContent;
     document.body.appendChild(newScript);
   });
 }
-
-// document.addEventListener("DOMContentLoaded", sendRequestWithToken);
 
 document
   .querySelector("#normal.user-selection")

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head>
     <script src="src/color-modes.js"></script>
@@ -49,7 +49,8 @@
         background-color: rgba(0, 0, 0, 0.1);
         border: solid rgba(0, 0, 0, 0.15);
         border-width: 1px 0;
-        box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
+        box-shadow:
+          inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
           inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
       }
 
@@ -136,29 +137,23 @@
       </symbol>
     </svg>
 
-      <header class="p-3 text-bg-dark">
-        <div class="container">
-          <div
-            class="d-flex flex-nowrap align-items-center justify-content-between"
+    <header class="p-3 text-bg-dark">
+      <div class="container">
+        <div
+          class="d-flex flex-nowrap align-items-center justify-content-between"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
           >
-            <a
-              href="/"
-              class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
-            >
-			        <img
-			          src="src/minirecord_logo_orange.svg"
-			          alt=""
-			          width="100"
-			        />
-            </a>
+            <img src="src/minirecord_logo_orange.svg" alt="" width="100" />
+          </a>
 
-            <div
-              class="nav col-8 justify-content-end align-items-center"
-            >
-							<p id="nameplate"></p>
-            </div>
+          <div class="nav col-8 justify-content-end align-items-center">
+            <p id="nameplate"></p>
+          </div>
 
-            <!--form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+          <!--form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
               <input
                 type="search"
                 class="form-control form-control-dark text-bg-dark"
@@ -167,97 +162,99 @@
               />
             </form-->
 
-            <div class="text-end">
-              <button type="button" class="btn btn-outline-light me-2" id="login-button" onclick="location.href='/login'">
-                Login
-              </button>
-              <!--button type="button" class="btn btn-warning">Sign-up</button-->
-            </div>
+          <div class="text-end">
+            <button
+              type="button"
+              class="btn btn-outline-light me-2"
+              id="login-button"
+              onclick="location.href='/login'"
+            >
+              Login
+            </button>
+            <!--button type="button" class="btn btn-warning">Sign-up</button-->
           </div>
         </div>
-      </header>
-      <div class="container justify-content-center mt-5">
-        <div class="outer-pane row justify-content-center align-items-stretch">
-          <div class="inner-pane" id="left-pane">
-            <!--p id="user-info">user-info</p-->
-            <div class="input-container col" id="video-url-box">
-              <label for="youtube-url">영상 URL</label>
-              <input
-                type="text"
-                id="youtube-url"
-                placeholder="YouTube 링크를 기입"
-                name="youtube_url"
-              />
-            </div>
-
-            <div class="input-container col" id="time-input-box">
-              <div class="time-pane">
-                <div id="start-time-group" class="time-group">
-                  <label for="start-time-input" class="time-label"
-                    >시작 시간</label
-                  >
-                  <time-element id="start-time-input"></time-element>
-                </div>
-                <!--span class="time-span">~</span-->
-                <div id="end-time-group" class="time-group">
-                  <label for="end-time-input" class="time-label"
-                    >종료 시간</label
-                  >
-                  <time-element id="end-time-input"></time-element>
-                </div>
-              </div>
-            </div>
-						<div class="button-pane col">
-	            <button type="submit" class="data-button" id="check-button">
-	              영상 체크
-	            </button>
-              <button class="data-button" id="submit-button">영상 제출</button>
-              <button class="data-button" id="overwrite-button">
-                덮어쓰기
-              </button>
-            </div>
+      </div>
+    </header>
+    <div class="container justify-content-center mt-5">
+      <div class="outer-pane row justify-content-center align-items-stretch">
+        <div class="inner-pane" id="left-pane">
+          <!--p id="user-info">user-info</p-->
+          <div class="input-container col" id="video-url-box">
+            <label for="youtube-url">영상 URL</label>
+            <input
+              type="text"
+              id="youtube-url"
+              placeholder="YouTube 링크를 기입"
+              name="youtube_url"
+            />
           </div>
 
-          <div class="inner-pane" id="right-pane">
-            <video
-              id="my-video"
-              class="video-js vjs-default-skin vjs-fluid"
-              preload="auto"
-              controls
-              data-setup='{"aspectRatio": "640:267", "playbackRates": [0.25, 0.5, 1, 1.25, 1.5, 1.75, 2t]}'
-              width="512"
-              height="512"
-            >
-              <!--source
+          <div class="input-container col" id="time-input-box">
+            <div class="time-pane">
+              <div id="start-time-group" class="time-group">
+                <label for="start-time-input" class="time-label"
+                  >시작 시간</label
+                >
+                <time-element id="start-time-input"></time-element>
+              </div>
+              <!--span class="time-span">~</span-->
+              <div id="end-time-group" class="time-group">
+                <label for="end-time-input" class="time-label">종료 시간</label>
+                <time-element id="end-time-input"></time-element>
+              </div>
+            </div>
+          </div>
+          <div class="button-pane col">
+            <button type="submit" class="data-button" id="check-button">
+              영상 체크
+            </button>
+            <button class="data-button" id="submit-button">영상 제출</button>
+            <button class="data-button" id="overwrite-button">덮어쓰기</button>
+          </div>
+        </div>
+
+        <div class="inner-pane" id="right-pane">
+          <video
+            id="my-video"
+            class="video-js vjs-default-skin vjs-fluid"
+            preload="auto"
+            controls
+            data-setup='{"aspectRatio": "640:267", "playbackRates": [0.25, 0.5, 1, 1.25, 1.5, 1.75, 2t]}'
+            width="512"
+            height="512"
+          >
+            <!--source
               src="http://localhost:8000/cropped_videos/?video_id=15FjcnS6qZs&start=00141&end=00148"
               type="video/mp4"
             /-->
-              <p class="vjs-no-js">
-                To view this video, please enable JavaScript, and consider
-                upgrading to a web browser that
-                <a
-                  href="https://videojs.com/html5-video-support/"
-                  target="_blank"
-                >
-                  supports HTML5 video
-                </a>
-              </p>
-            </video>
-          </div>
-        </div>
-        <div class="markdown">
-          <p id="readme">Here's for markdown!</p>
+            <p class="vjs-no-js">
+              To view this video, please enable JavaScript, and consider
+              upgrading to a web browser that
+              <a
+                href="https://videojs.com/html5-video-support/"
+                target="_blank"
+              >
+                supports HTML5 video
+              </a>
+            </p>
+          </video>
         </div>
       </div>
-
-    </main>
-    <script type="module" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-		<script type="module" src="src/header-load.js">
-		</script>
-		<script type="module" charset="utf-8" src="https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js">
-			
-		</script>
-		<script type="module" src="src/TimeElement.js"></script>
-		<script type="module" src="src/go-back-to-index.js"></script>
+      <div class="markdown">
+        <p id="readme">Here's for markdown!</p>
+      </div>
+    </div>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js"
+    ></script>
+    <script
+      type="module"
+      src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script type="module" src="src/header-load.js"></script>
+    <script type="module" src="src/TimeElement.mjs"></script>
+    <script type="module" src="src/go-back-to-index.js"></script>
   </body>
 </html>
