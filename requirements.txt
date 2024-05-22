@@ -3,3 +3,14 @@ uvicorn
 python-dotenv
 pydantic
 pyjwt[crypto]
+
+ffmpeg-python
+opencv-python
+yt-dlp
+gradio
+sqlalchemy
+aiomysql
+pymysql
+mxnet
+insightface
+onnxruntime

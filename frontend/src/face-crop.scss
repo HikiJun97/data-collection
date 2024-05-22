@@ -1,0 +1,246 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "headers.css";
+@import "ci-color";
+
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+}
+
+.b-example-divider {
+  width: 100%;
+  height: 3rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: solid rgba(0, 0, 0, 0.15);
+  border-width: 1px 0;
+  box-shadow:
+    inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
+    inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
+}
+
+.b-example-vr {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 100vh;
+}
+
+.bi {
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+.nav-scroller {
+  position: relative;
+  z-index: 2;
+  height: 2.75rem;
+  overflow-y: hidden;
+}
+
+.nav-scroller .nav {
+  display: flex;
+  flex-wrap: nowrap;
+  padding-bottom: 1rem;
+  margin-top: -1px;
+  overflow-x: auto;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.btn-bd-primary {
+  --bd-violet-bg: #712cf9;
+  --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+  --bs-btn-font-weight: 600;
+  --bs-btn-color: var(--bs-white);
+  --bs-btn-bg: var(--bd-violet-bg);
+  --bs-btn-border-color: var(--bd-violet-bg);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: #6528e0;
+  --bs-btn-hover-border-color: #6528e0;
+  --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: #5a23c8;
+  --bs-btn-active-border-color: #5a23c8;
+}
+
+.bd-mode-toggle {
+  z-index: 1500;
+}
+
+.bd-mode-toggle .dropdown-menu .active .bi {
+  display: block !important;
+}
+
+.outer-pane {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: start;
+  gap: 0.5rem;
+}
+
+.inner-pane {
+  @extend .col-6, .justify-content-between, .mx-1, .my-3;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 16rem;
+}
+
+#user-info {
+  display: inline-block;
+  align-self: right;
+  width: 90%;
+  height: 10px;
+  margin-top: 15px;
+  margin-left: 3%;
+}
+
+.input-container {
+  @extend .p-2, .mb-3;
+  border: solid;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border-color: rgb(216, 216, 216);
+  border-width: 1px;
+
+  label {
+    display: block; /* 레이블을 블록 요소로 설정 */
+    @extend .mt-1, .mb-2;
+    color: rgb(150, 150, 150);
+    font-size: 0.76rem;
+    line-height: 10px;
+  }
+
+  input {
+    display: block;
+    padding: 0.3rem;
+    width: 100%;
+    font-size: 0.8rem;
+    box-sizing: border-box; /* 패딩과 보더를 너비에 포함 */
+    border-style: solid;
+    border-radius: 6px;
+    border-color: silver;
+    border-width: 1px;
+    box-shadow: inset 0px 0.6px 5px 1.4px silver;
+  }
+}
+
+.time-pane {
+  font-size: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.time-group {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 47%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-content: start;
+}
+
+.time-label {
+  display: block; /* 레이블을 블록 요소로 설정 */
+  @extend .mt-1, .mb-2;
+  color: rgb(150, 150, 150);
+  font-size: 0.76rem;
+  line-height: 10px;
+}
+
+/*
+time-element {
+  width: 100%;
+}
+*/
+
+.data-button {
+  @extend .mt-3, .w-100;
+  height: 40px;
+  border-radius: 9px;
+  border: none;
+  background: rgb(255, 204, 179);
+  box-shadow: inset 0px 0px 1px 1px rgba(255, 135, 55, 0.507);
+  transition-duration: 0.07s;
+  transition: 0.2s;
+  font-size: 0.87rem;
+  font-weight: 500;
+
+  &:hover,
+  &:focus {
+    background: #ff9f6e;
+    font-weight: bold;
+  }
+
+  &:active {
+    background: #ffb793;
+    font-weight: bold;
+    box-shadow: inset 1px 1px 1px 1px rgb(255, 148, 77);
+  }
+
+  &:disabled {
+    background: silver;
+    font-weight: bold;
+  }
+}
+
+.button-pane {
+  @extend .justify-content-between, .align-self-end;
+}
+
+.video-js {
+  z-index: 1000;
+  background: transparent;
+}
+
+.video-js .vjs-control-bar {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s;
+}
+
+.video-js:hover .vjs-control-bar {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  opacity: 1;
+  visibility: visible;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.markdown {
+  /*  */
+  @extend .col-12, .mt-3;
+  align-self: center;
+  /*
+  width: 80%;
+  max-width: 1225px;
+  */
+  height: fit-content;
+  overflow: auto;
+}
