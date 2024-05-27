@@ -150,9 +150,16 @@ async def intermediate(request: Request):
     return templates.TemplateResponse(name="intermediate.html", context=context)
 
 
-#     with open(HTML_DIR / "intermediate.html") as f:
-#         html_content = f.read()
-#     return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
+@app.get("/header")
+async def header(
+    request: Request,
+    token_info: Annotated[TokenInfo, Security(TokenHandler.verify_access_token)],
+):
+    return templates.TemplateResponse(name="header.html", request=request)
+
+    #     with open(HTML_DIR / "intermediate.html") as f:
+    #         html_content = f.read()
+    #     return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 
 
 @app.get("/data-collection")
@@ -172,7 +179,7 @@ async def get_users_and_data(
 ):
     query = select(User).options(joinedload(User.data))
     query_result = (await session.scalars(query)).unique().all()
-    results: List[Dict[str, Any]] = [
+    results: List[Dict[str, str | List[Dict[str, str | bool]]]] = [
         {
             "id": user.id,
             "data": [
@@ -184,6 +191,9 @@ async def get_users_and_data(
                     "valid": datum.valid,
                     "validated": datum.validated,
                     "validator": datum.validator,
+                    "type": datum.type,
+                    "gender": datum.gender,
+                    "age": datum.age,
                 }
                 for datum in user.data
             ],

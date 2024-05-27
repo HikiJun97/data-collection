@@ -1,37 +1,30 @@
 export default class TimeElement extends HTMLElement {
-	hours: string;
-	minutes: string;
-	seconds: string;
-
-	constructor() {
-		super();
-		this.attachShadow({mode: 'open'});
-
-		this.hours = "0";
-		this.minutes = "00";
-		this.seconds = "00";
-
-		this.handleChange = this.handleChange.bind(this);
-	}
-
-	static get observedAttributes() {
-		return ['hours', 'minutes', 'seconds'];
-	}
-
-	attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
-		if (newValue !== null) {
-			(this as any)[name] = newValue;
-			this.update();
-		}
-	}
-
-	connectedCallback() {
-		this.render();
-	}
-
-	render() {
-		if (this.shadowRoot) {
-			this.shadowRoot.innerHTML = `
+    hours;
+    minutes;
+    seconds;
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.hours = "0";
+        this.minutes = "00";
+        this.seconds = "00";
+        this.handleChange = this.handleChange.bind(this);
+    }
+    static get observedAttributes() {
+        return ['hours', 'minutes', 'seconds'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (newValue !== null) {
+            this[name] = newValue;
+            this.update();
+        }
+    }
+    connectedCallback() {
+        this.render();
+    }
+    render() {
+        if (this.shadowRoot) {
+            this.shadowRoot.innerHTML = `
         <style>
           :host {
             font-family: sans-serif;
@@ -129,40 +122,36 @@ export default class TimeElement extends HTMLElement {
         </div>
         <div id="error"></div>
       `;
-
-			this.shadowRoot.querySelectorAll('input').forEach(input => {
-				input.addEventListener('input', this.handleChange);
-			});
-		}
-	}
-
-	handleChange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const {id, value} = target;
-		(this as any)[id] = value;
-		this.setAttribute(id, value);
-	}
-
-	getTimeValues() {
-		return {
-			hours: this.hours,
-			minutes: this.minutes,
-			seconds: this.seconds,
-		};
-	}
-
-	update() {
-		if (this.shadowRoot) {
-			const hoursInput = this.shadowRoot.getElementById('hours') as HTMLInputElement | null;
-			const minutesInput = this.shadowRoot.getElementById('minutes') as HTMLInputElement | null;
-			const secondsInput = this.shadowRoot.getElementById('seconds') as HTMLInputElement | null;
-
-			if (hoursInput) hoursInput.value = this.hours;
-			if (minutesInput) minutesInput.value = this.minutes;
-			if (secondsInput) secondsInput.value = this.seconds;
-		}
-	}
+            this.shadowRoot.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', this.handleChange);
+            });
+        }
+    }
+    handleChange(event) {
+        const target = event.target;
+        const { id, value } = target;
+        this[id] = value;
+        this.setAttribute(id, value);
+    }
+    getTimeValues() {
+        return {
+            hours: this.hours,
+            minutes: this.minutes,
+            seconds: this.seconds,
+        };
+    }
+    update() {
+        if (this.shadowRoot) {
+            const hoursInput = this.shadowRoot.getElementById('hours');
+            const minutesInput = this.shadowRoot.getElementById('minutes');
+            const secondsInput = this.shadowRoot.getElementById('seconds');
+            if (hoursInput)
+                hoursInput.value = this.hours;
+            if (minutesInput)
+                minutesInput.value = this.minutes;
+            if (secondsInput)
+                secondsInput.value = this.seconds;
+        }
+    }
 }
-
 customElements.define('time-element', TimeElement);
-

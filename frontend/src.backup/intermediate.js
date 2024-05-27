@@ -1,5 +1,5 @@
-import { verifyToken } from "./verify";
-import { loadPage } from "./load-pages";
+import { verifyToken } from "./verify.js";
+import { loadPage } from "./load-page.js";
 
 async function redirectToPage() {
   try {

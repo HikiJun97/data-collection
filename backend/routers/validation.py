@@ -20,7 +20,7 @@ async def data_validate(
     request: Request,
 ):
     # return templates.TemplateResponse(name="validation.html", request=request)
-    with open(Config.HTML_DIR + "/validation.html") as f:
+    with open(Config.HTML_DIR / "validation.html") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 

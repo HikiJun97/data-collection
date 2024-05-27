@@ -1,113 +1,69 @@
-import { verifyToken } from "./verify";
-
-document.getElementById("loginForm").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const userId = document.getElementById("user-id").value;
-  const userPw = document.getElementById("user-password").value;
-  const remember = document.getElementById("remember-me").checked;
-
-  fetch("/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userId: userId,
-      userPw: userPw,
-      rememeber: remember,
-    }),
-  })
-    .then((response) => {
-      let status_4XX = [401, 403];
-      if (status_4XX.includes(response.status)) {
-        document.getElementById("errorMsg").style.display = "block";
-      } else {
-        response.json().then((data) => {
-          if (data.accessToken) {
-            localStorage.setItem("accessToken", data.accessToken);
-            // set 'secure;' after domain attached
-            sessionStorage.setItem("isLoggedIn", "true");
-            console.log("Cookie saved");
-            // let url = "/data-collection";
-            // loadPage(url);
-            window.location.href = "/index";
-          }
-        });
-        document.getElementById("errorMsg").style.display = "none";
-      }
-    })
-    .catch((error) => {
-      console.error("Error during fetch:", error);
-    });
-});
-
-function sendRequestWithToken() {
-  // Local Storage에서 access token 가져오기
-  const accessToken = localStorage.getItem("accessToken");
-  console.log("accessToken: " + accessToken);
-
-  if (accessToken) {
-    console.log("accessToken exists");
-    fetch("/verification", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`, // Bearer 스키마를 사용한 인증 헤더 설정
-      },
-    })
-      .then((response) => {
-        let url = "/data-collection";
-        loadPage(url);
-      })
-      .catch((error) => console.error("Error:", error));
-  }
-}
-
-function loadPage(url) {
-  fetch(url, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    },
-  })
-    .then((response) => {
-      if (response.ok) return response.text();
-      throw new Error("Failed to fetch data");
-    })
-    .then((html) => {
-      document.documentElement.innerHTML = html;
-      loadScript(html);
-      let newTitle = url.split("/").at(-1);
-      history.pushState(null, null, url);
-    })
-    .catch((error) => {
-      console.error("Error fetching protected resources:", error);
-    });
-}
-
-function loadScript(html) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const scripts = doc.querySelectorAll("script");
-  scripts.forEach((script) => {
-    const newScript = document.createElement("script");
-    if (script.src) {
-      newScript.src = script.src;
-    } else {
-      newScript.textContent = script.textContent;
+import { verifyToken } from "./verify.js";
+// import {loadPage} from "./load-page.js";
+function validateInput(input) {
+    if (input.value === "") {
+        input.style.border = "1px solid red";
+        return false;
     }
-    document.body.appendChild(newScript);
-  });
+    input.style.border = "1px solid #ccc";
+    return true;
 }
-
-async function moveToIndex() {
-  try {
-    await verifyToken();
-    window.location.href = "/index";
-  } catch (error) {}
+async function issueToken(userId, userPw, rememberMe) {
+    const res = await fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            userId: userId,
+            userPw: userPw,
+            rememberMe: rememberMe,
+        }),
+    });
+    const data = await res.json();
+    if (data.accessToken) {
+        localStorage.setItem("accessToken", data.accessToken);
+        window.location.href = "/index";
+    }
 }
-
+async function addLoginEvent() {
+    document
+        .getElementById("loginForm")
+        ?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+            const userIdInput = document.getElementById("user-id");
+            const userPwInput = document.getElementById("user-password");
+            const rememberMeCheck = document.getElementById("remember-me");
+            if (!validateInput(userIdInput) || !validateInput(userPwInput)) {
+                // TODO: Add error message to be appeared on the screen
+                throw new Error("Empty input");
+            }
+            await issueToken(userIdInput.value, userPwInput.value, rememberMeCheck.checked);
+            console.log("Cookie saved");
+            window.location.href = "/index";
+            return;
+        }
+        catch (e) {
+            const errorMsg = document.getElementById("errorMsg");
+            errorMsg.style.display = "block";
+            if (e instanceof Error) {
+                errorMsg.innerText = e.message;
+            }
+            else {
+                errorMsg.innerText = "An unknown error occurred";
+            }
+        }
+    });
+}
 (async () => {
-  await moveToIndex();
+    try {
+        const username = await verifyToken();
+        console.log("username:", username);
+        window.location.href = "/index";
+    }
+    catch (e) {
+        await addLoginEvent();
+    }
 })();
-
 // document.addEventListener("DOMContentLoaded", sendRequestWithToken);
