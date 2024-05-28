@@ -135,7 +135,7 @@ async def index_content(
     request: Request,
     token_info: Annotated[TokenInfo, Security(TokenHandler.verify_access_token)],
 ):
-    with open(HTML_DIR / "index-content.html") as f:
+    with open(HTML_DIR / "index.html") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 
@@ -162,7 +162,7 @@ async def header(
     #     return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 
 
-@app.get("/data-collection")
+@app.get("/face-crop")
 async def face_crop(
     request: Request,
     token_payload: TokenInfo = Security(TokenHandler.verify_access_token),

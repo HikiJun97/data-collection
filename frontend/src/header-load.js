@@ -1,19 +1,4 @@
-"use strict";
-async function loadHeaderHtml() {
-    const header = document.querySelector("header");
-    if (header) {
-        try {
-            const response = await fetch("/header");
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(await response.text(), "text/html");
-            console.log(doc.body.innerHTML);
-            header.innerHTML = doc.body.innerHTML;
-        }
-        catch (e) {
-            console.error("Error:", e);
-        }
-    }
-}
+import { loadPage } from "./load-page.js";
 async function loadHeader() {
     // Local Storage에서 access token 가져오기
     const accessToken = localStorage.getItem("accessToken");
@@ -22,7 +7,9 @@ async function loadHeader() {
         window.location.href = "/login";
         return;
     }
-    await loadLoggedInHeader(accessToken);
+    const headerContainer = document.querySelector("header");
+    await loadPage(headerContainer, "/header", "header");
+    await loadLoggedInHeader(accessToken); // 그 다음에 인증 상태를 확인하여 업데이트
 }
 async function loadLoggedInHeader(accessToken) {
     try {
@@ -40,7 +27,9 @@ async function loadLoggedInHeader(accessToken) {
         }
         const data = await response.json();
         const username = data.username;
-        document.getElementById("nameplate").innerText = username;
+        console.log("username: " + username);
+        document.getElementById("nameplate").innerText =
+            username;
         const loginButton = document.querySelector("#login-button");
         if (loginButton) {
             loginButton.innerText = "Logout";
@@ -48,7 +37,7 @@ async function loadLoggedInHeader(accessToken) {
         }
     }
     catch (e) {
-        console.error("Error:", e);
+        console.error("Error verifying token:", e);
     }
 }
 function clearAuthTokens() {
@@ -59,6 +48,5 @@ function clearAuthTokens() {
     return;
 }
 (async () => {
-    // await loadHeaderHtml();
-    await loadHeader();
+    await loadHeader(); // loadHeader 내부에서 loadHeaderHtml과 loadLoggedInHeader 호출
 })();

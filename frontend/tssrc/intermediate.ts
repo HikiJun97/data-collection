@@ -1,18 +1,26 @@
-import {verifyToken} from "./verify.js";
-import {loadPage} from "./load-page.js";
+import { verifyToken } from "./verify.js";
+import { loadWholePage, loadPage } from "./load-page.js";
 
 async function redirectToPage(): Promise<void> {
-	try {
-		await verifyToken();
-		console.log("window.fromPath: " + window.fromPath);
-		console.log("type:", typeof (window.fromPath));
-		await loadPage("/index");
-	} catch (e) {
-		console.error("Error:", e);
-		window.location.href = "/login";
-	}
+  try {
+    await verifyToken();
+    // await loadWholePage("/index");
+    await loadPage(
+      document.querySelector("header") as HTMLElement,
+      "/header",
+      "header"
+    );
+    await loadPage(
+      document.querySelector("main") as HTMLElement,
+      "/index",
+      "main"
+    );
+  } catch (e) {
+    console.error("Error:", e);
+    window.location.href = "/login";
+  }
 }
 
 (async () => {
-	await redirectToPage();
+  await redirectToPage();
 })();
