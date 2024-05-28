@@ -123,6 +123,40 @@ function updateDataSelection(user) {
     dataSelect.clearOptions();
     dataSelect.addOptions(getDataOptions(user));
 }
+async function fetchVideo() {
+    const userId = document.getElementById("user-selection")?.tomselect.getValue();
+    const datumId = document.getElementById("data-selection")?.tomselect.getValue();
+    if (!userId || !datumId) {
+        return;
+    }
+    const videoData = { userId, ...parseVideoString(datumId) };
+    console.log(videoData);
+}
+async function initializeButtons() {
+    //	document
+    //		.getElementById("valid-button")
+    //		?.addEventListener("click", () => setDatumValidated(true));
+    //	document
+    //		.getElementById("invalid-button")
+    //		?.addEventListener("click", () => setDatumValidated(false));
+    document
+        .getElementById("check-button")
+        ?.addEventListener("click", fetchVideo);
+}
+function parseVideoString(datumId) {
+    const regex = /([a-zA-Z0-9_-]+) \[(\d{2}:\d{2}:\d{2}) - (\d{2}:\d{2}:\d{2})\]/;
+    const match = datumId.match(regex);
+    if (!match) {
+        throw new Error("Invalid video string format");
+    }
+    const [_, videoId, startTime, endTime] = match;
+    return {
+        videoId,
+        startTime,
+        endTime,
+    };
+}
 (async () => {
     await initializeSelections();
+    await initializeButtons();
 })();

@@ -13,6 +13,7 @@
     "bootstrap-icons": "^1.11.3",
     "choices.js": "^10.2.0",
     "lit": "^3.1.2",
+    "sass": "^1.77.2",
     "showdown": "^2.1.0",
     "tom-select": "^2.3.1",
     "typescript": "^5.4.5"
