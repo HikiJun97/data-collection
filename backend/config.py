@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 class Config:
     # frontend directory
     HTML_DIR = Path.home() / "data-collection" / "frontend"
+    VIDEO_DIR = Path.home() / "video-data" / "cropped_videos"
     SRC = "src"
 
     HOST = "0.0.0.0"

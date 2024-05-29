@@ -130,7 +130,21 @@ async function fetchVideo() {
         return;
     }
     const videoData = { userId, ...parseVideoString(datumId) };
-    console.log(videoData);
+    const response = await fetch(`/video/?user-id=${videoData.userId}&video-id=${videoData.videoId}&start-time=${videoData.startTime}&end-time=${videoData.endTime}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (response.ok) {
+        const videoBlob = await response.blob();
+        const videoUrl = URL.createObjectURL(videoBlob);
+        const videoPlayer = document.querySelector("video");
+        videoPlayer.src = videoUrl;
+    }
+    else {
+        console.error("Failed to load video");
+    }
 }
 async function initializeButtons() {
     //	document
@@ -140,7 +154,7 @@ async function initializeButtons() {
     //		.getElementById("invalid-button")
     //		?.addEventListener("click", () => setDatumValidated(false));
     document
-        .getElementById("check-button")
+        .getElementById("fetch-button")
         ?.addEventListener("click", fetchVideo);
 }
 function parseVideoString(datumId) {

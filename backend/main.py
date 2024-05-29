@@ -17,6 +17,7 @@ from fastapi.responses import (
     JSONResponse,
     FileResponse,
     RedirectResponse,
+    StreamingResponse,
 )
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -37,6 +38,7 @@ app = FastAPI()
 
 SRC: str = Config.SRC
 HTML_DIR: Path = Config.HTML_DIR
+VIDEO_DIR: Path = Config.VIDEO_DIR
 app.mount("/" + SRC, StaticFiles(directory=HTML_DIR / SRC), name=SRC)
 app.mount(
     "/node_modules",
@@ -208,27 +210,28 @@ async def check_video(request: Request):
     return {"msg": "video check success"}
 
 
-@app.get("/cropped_videos/", response_class=FileResponse)
+@app.get("/video/")
 async def get_video(
-    video_id: Annotated[str, Query(min_length=11, max_length=11)],
-    start: Annotated[str, Query(min_length=5, max_length=6)],
-    end: Annotated[str, Query(min_length=5, max_length=6)],
+    user_id: Annotated[str, Query(..., alias="user-id")],
+    video_id: Annotated[str, Query(..., alias="video-id")],
+    start_time: Annotated[str, Query(..., alias="start-time")],  # HH:mm:SS
+    end_time: Annotated[str, Query(..., alias="end-time")],
+    token_payload: TokenInfo = Security(TokenHandler.verify_access_token),
 ):
-    start_time: str = (
-        f"{int(start[0:-4]):02d}:{int(start[-4:-2]):02d}:{int(start[-2:]):02d}"
+    # start_time_text: str = start_time.replace(":", "_")
+    # end_time_text: str = end_time.replace(":", "_")
+    video_file: Path = (
+        VIDEO_DIR / f"({user_id}){{{video_id}}}[{start_time}-{end_time}].mp4"
     )
 
-    end_time: str = (
-        f"{int(end[0:-4]): 02d}: {int(end[-4:-2]): 02d}: {int(end[-2:]): 02d}"
-    )
-    EXT = "mp4"
+    if not video_file.exists():
+        raise HTTPException(status_code=404, detail="Video not found")
 
-    ROOT_PATH: Path = Path(
-        "/Users/sgn04088/face-crop-data-collection/src/collection/cropped_videos"
-    )
-    file_name = f"{video_id} [{start_time} - {end_time}].{EXT}"
+    def iterfile():
+        with open(video_file, mode="rb") as file_like:
+            yield from file_like
 
-    return FileResponse(path=ROOT_PATH / file_name)
+    return StreamingResponse(iterfile(), media_type="video/mp4")
 
 
 @app.exception_handler(HTTPException)
