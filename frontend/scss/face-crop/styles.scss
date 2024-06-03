@@ -1,5 +1,5 @@
-@import "../node_modules/bootstrap/scss/bootstrap";
-@import "ci-color";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../ci-color";
 
 .bd-placeholder-img {
   font-size: 1.125rem;
@@ -78,76 +78,22 @@
 .bd-mode-toggle .dropdown-menu .active .bi {
   display: block !important;
 }
-/*body,
-html {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-content: center;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}*/
-
-/* headers */
-
-/*
 .outer-pane {
-  align-self: center;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 10px;
-  width: 80%;
-  height: 50%;
-  overflow: auto;
-  border: solid;
+  align-content: start;
+  gap: 0.5rem;
 }
-*/
 
 .inner-pane {
-  @extend .col-6, .justify-content-between;
-}
-
-/*
-#left-pane {
-  height: 100%;
-  max-width: 700px;
-  min-width: 300px;
-  margin: 10px;
-  display: flex;
-  justify-content: end;
-  flex-wrap: nowrap;
-  flex-direction: column;
+  @extend .col-6, .justify-content-between, .mx-1, .my-3;
   flex-grow: 1;
-  flex-basis: 0;
-  justify-content: start;
-  align-items: start;
-  overflow: auto;
-  border: solid;
-  border-color: red;
+  flex-shrink: 1;
+  flex-basis: 16rem;
 }
-*/
-
-/*
-#right-pane {
-  height: 100%;
-  max-width: 500px;
-  min-width: 300px;
-  flex-grow: 1;
-  flex-basis: 0;
-  margin: 10px;
-  overflow: auto;
-  background: transparent;
-  border: solid;
-}
-*/
 
 #user-info {
   display: inline-block;
@@ -159,13 +105,6 @@ html {
 }
 
 .input-container {
-  /*
-  align-self: end;
-  width: 100%;
-  height: fit-content;
-  margin-top: 10px;
-  padding: 13px;
-	*/
   @extend .p-2, .mb-3;
   border: solid;
   box-sizing: border-box;
@@ -196,56 +135,38 @@ html {
 }
 
 .time-pane {
-  width: 100%;
-  height: auto;
   font-size: 1rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  border: solid;
-  border-color: blue;
+  gap: 1rem;
 }
 
 .time-group {
-  /*  */
-  max-width: 50%;
-  width: 100%;
-  min-width: 200px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 47%;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: start;
-  align-items: center;
-  border: solid;
-  border-color: purple;
-}
-
-.time-span {
-  width: fit-content;
-  height: fit-content;
-  margin-left: 10px;
-  margin-right: 8px;
-  text-align: center;
-  color: rgb(131, 131, 131);
-  font-size: 0.9rem;
-  border: solid;
-  border-color: gray;
-  /*
-  align-self: center;
-	*/
+  align-content: start;
 }
 
 .time-label {
-  width: 100%;
-  height: 30px;
-  vertical-align: sub;
-  font-size: 3rem;
+  display: block; /* 레이블을 블록 요소로 설정 */
+  @extend .mt-1, .mb-2;
+  color: rgb(150, 150, 150);
+  font-size: 0.76rem;
+  line-height: 10px;
 }
 
+/*
 time-element {
   width: 100%;
 }
+*/
 
 .data-button {
   @extend .mt-3, .w-100;
@@ -318,49 +239,4 @@ video {
   */
   height: fit-content;
   overflow: auto;
-}
-
-.user-info,
-.data-info {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-.user-id,
-.valid-count {
-  display: inline-block;
-}
-
-#fetch-button {
-  background-color: $minirecord;
-  border-color: $minirecord;
-
-  &:hover,
-  &:focus {
-    background: $minirecord-active;
-    border-color: $minirecord-active;
-  }
-}
-
-.select-group {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-
-.select-group .ts-wrapper {
-  @extend .col-4;
-}
-
-#invalid-button {
-  background-color: red;
-  border-color: red;
-
-  &:hover,
-  &:focus {
-    background-color: #d10202;
-    border-color: #d10202;
-  }
 }

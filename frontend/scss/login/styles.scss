@@ -1,5 +1,7 @@
-@import "../node_modules/bootstrap/scss/bootstrap";
-@import "ci-color";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../ci-color";
+
+$primary: $minirecord;
 
 html,
 body {
@@ -30,7 +32,7 @@ body {
 .btn-bd-primary {
   --bd-violet-bg: #712cf9;
   --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-  --bd-orange: $minirecord;
+  --bd-orange: #ff7630;
 
   --bs-btn-font-weight: 600;
   --bs-btn-color: var(--bs-white);
@@ -43,6 +45,17 @@ body {
   --bs-btn-active-color: var(--bs-btn-hover-color);
   --bs-btn-active-bg: #5a23c8;
   --bs-btn-active-border-color: #5a23c8;
+}
+
+#sign-in {
+  background-color: $minirecord;
+  border-color: $minirecord;
+
+  &:hover,
+  &:focus {
+    background: $minirecord-active;
+    border-color: $minirecord-active;
+  }
 }
 
 #errorMsg {

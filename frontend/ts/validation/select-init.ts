@@ -126,7 +126,7 @@ async function initTomSelect(): Promise<void> {
       },
     },
     onFocus: () => {
-      updateDataSelection(userSelect.getValue() as string);
+      updateDataSelect(userSelect.getValue() as string);
     },
   });
 
@@ -157,7 +157,15 @@ async function waitForTomSelect(): Promise<void> {
   }
 }
 
-async function initializeSelections(): Promise<void> {
+function updateDataSelect(user: string): void {
+  const dataSelect = (
+    document.getElementById("data-selection") as HTMLSelectElement
+  )?.tomselect;
+  dataSelect.clearOptions();
+  dataSelect.addOptions(getDataOptions(user));
+}
+
+export async function initSelect(): Promise<void> {
   try {
     await waitForTomSelect();
     await saveUserData();
@@ -167,88 +175,9 @@ async function initializeSelections(): Promise<void> {
     )?.tomselect;
     userSelect.addOptions(userOptions);
     userSelect.on("change", () => {
-      updateDataSelection(userSelect.getValue() as string);
+      updateDataSelect(userSelect.getValue() as string);
     });
   } catch (e) {
     console.error("Error: ", e);
   }
 }
-
-function updateDataSelection(user: string): void {
-  const dataSelect = (
-    document.getElementById("data-selection") as HTMLSelectElement
-  )?.tomselect;
-  dataSelect.clearOptions();
-  dataSelect.addOptions(getDataOptions(user));
-}
-
-async function fetchVideo(): Promise<void> {
-  const userId = (
-    document.getElementById("user-selection") as HTMLSelectElement
-  )?.tomselect.getValue();
-  const datumId = (
-    document.getElementById("data-selection") as HTMLSelectElement
-  )?.tomselect.getValue();
-  if (!userId || !datumId) {
-    return;
-  }
-
-  const videoData = { userId, ...parseVideoString(datumId) };
-  const response = await fetch(
-    `/video/?user-id=${videoData.userId}&video-id=${videoData.videoId}&start-time=${videoData.startTime}&end-time=${videoData.endTime}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  if (response.ok) {
-    const videoBlob = await response.blob();
-    const videoUrl = URL.createObjectURL(videoBlob);
-    const videoPlayer = document.querySelector("video") as HTMLVideoElement;
-    videoPlayer.src = videoUrl;
-  } else {
-    console.error("Failed to load video");
-  }
-}
-
-async function initializeButtons(): Promise<void> {
-  //	document
-  //		.getElementById("valid-button")
-  //		?.addEventListener("click", () => setDatumValidated(true));
-  //	document
-  //		.getElementById("invalid-button")
-  //		?.addEventListener("click", () => setDatumValidated(false));
-  document
-    .getElementById("fetch-button")
-    ?.addEventListener("click", fetchVideo);
-}
-
-function parseVideoString(datumId: string): {
-  videoId: string;
-  startTime: string;
-  endTime: string;
-} {
-  const regex =
-    /([a-zA-Z0-9_-]+) \[(\d{2}:\d{2}:\d{2}) - (\d{2}:\d{2}:\d{2})\]/;
-  const match = datumId.match(regex);
-
-  if (!match) {
-    throw new Error("Invalid video string format");
-  }
-
-  const [_, videoId, startTime, endTime] = match;
-
-  return {
-    videoId,
-    startTime,
-    endTime,
-  };
-}
-
-(async () => {
-  await initializeSelections();
-  await initializeButtons();
-})();

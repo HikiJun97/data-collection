@@ -18,11 +18,12 @@ router: APIRouter = APIRouter(
 @router.get("")
 async def data_validate(
     request: Request,
+    token_info: Annotated[TokenInfo, Security(TokenHandler.verify_access_token)],
 ):
-    # return templates.TemplateResponse(name="validation.html", request=request)
-    with open(Config.HTML_DIR / "validation.html") as f:
-        html_content = f.read()
-    return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
+    return templates.TemplateResponse(name="validation.html", request=request)
+    # with open(Config.HTML_DIR / "validation.html") as f:
+    #     html_content = f.read()
+    # return HTMLResponse(content=html_content, status_code=status.HTTP_200_OK)
 
 
 @router.post("/valid", response_class=JSONResponse, response_model=None)

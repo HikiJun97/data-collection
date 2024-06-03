@@ -1,4 +1,4 @@
-import { loadPage } from "./load-page.js";
+import { loadPage } from "../load-page.js";
 
 const normalUserSelection = document.querySelector(
   "#normal.user-selection"

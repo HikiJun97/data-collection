@@ -24,5 +24,12 @@ dist-ssr
 *.sln
 *.sw?
 
+# compiiled css
+*.css
+*.css.map
+
+# compiled js
+*.js
+
 # compile outputs
 __pycache__/
